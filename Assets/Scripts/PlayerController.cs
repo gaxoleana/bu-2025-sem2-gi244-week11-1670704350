@@ -42,8 +42,25 @@ public class PlayerController : MonoBehaviour
             if (hasPowerUp == true)
             {
                 var rb = collision.gameObject.GetComponent<Rigidbody>();
-                rb.AddForce(100 * Vector3.up, ForceMode.Impulse);
+                var dir = collision.transform.position - transform.position;
+                rb.AddForce(5 * dir.normalized, ForceMode.Impulse);
             }
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("PowerUp"))
+        {
+            hasPowerUp = true;
+            Destroy(other.gameObject);
+            StartCoroutine(PowerUpCountDown());
+        }
+    }
+
+    IEnumerator PowerUpCountDown()
+    {
+        yield return new WaitForSeconds(10f);
+        hasPowerUp = false;
     }
 }
